@@ -1,0 +1,20 @@
+
+[Jenkins] Build #4821 started on agent hil-bench-03
+[2026-03-02 02:14:07] INFO  Stage: Flash ECU (target: ecu-x1, image: fw_1.8.2.bin)
+[2026-03-02 02:14:09] INFO  Opening serial /dev/ttyUSB2 @ 115200
+[2026-03-02 02:14:11] INFO  Power cycle via relay channel 4
+[2026-03-02 02:14:14] INFO  Waiting for bootloader prompt (timeout 30s)
+[2026-03-02 02:14:44] ERROR Bootloader prompt not received
+[2026-03-02 02:14:44] WARN  Retry 1/2: power cycle
+[2026-03-02 02:15:18] ERROR Bootloader prompt not received
+[2026-03-02 02:15:18] WARN  Retry 2/2: power cycle
+[2026-03-02 02:15:52] ERROR Bootloader prompt not received
+[2026-03-02 02:15:52] ERROR Flash failed after 3 attempts
+[2026-03-02 02:15:53] INFO  CAN: no frames received on can0 since 02:14:11
+[2026-03-02 02:15:53] WARN  Relay board 4 reports supply voltage 3.1V (expected 12V)
+[Robot] ==============================================================================
+[Robot] Boot Tests.Smoke :: Verify ECU boots and answers UDS 0x22 F190
+[Robot] Verify ECU Boots                                              | FAIL |
+[Robot] ConnectionError: ECU did not respond within 10s
+[Robot] 0 tests passed, 12 tests failed (all skipped after setup failure)
+[Jenkins] Build #4821 finished: FAILURE
