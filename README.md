@@ -1,31 +1,88 @@
-# Log Triage
+# AI-Assisted Log Triage
 
-## What it does:
+A small **AI-for-QA proof of concept** that combines an OpenAI model with deterministic validation rules to triage automated-test failure logs.
 
-This proof of concept sends an automated test failure log to an OpenAI model and asks it for a structured category, root cause, evidence, and confidence. A deterministic `validate` step checks the response fields, `check_evidence` flags evidence that cannot be found in the log, and a final human-review guardrail marks uncertain, unsupported, or uninformative results for review instead of treating the model label as authoritative. An uninformative-log code rule catches logs that contain only generic “Test failed” and retry lines.
+The goal is not to let an LLM become the authority. Instead, the model proposes a structured classification and supporting evidence, while ordinary code verifies the response and routes uncertain results to human review.
 
-## Findings:
+## What it demonstrates
 
-- The model can turn a failure log into a structured triage result.
-- Deterministic validation rejects malformed categories, root causes, evidence fields, and confidence values.
-- Evidence checking flags quotes that do not appear in the source log.
-- Low confidence, missing evidence, unsupported evidence, or an `unknown` category can trigger human review.
-- Uninformative logs get flagged by a code rule, not by trusting the label.
+- Structured failure classification from test logs.
+- Suggested root cause, evidence, and confidence.
+- Deterministic schema/value validation.
+- Evidence verification against the original source log.
+- Human-review guardrails for low-confidence or unsupported results.
+- A rule-based path for uninformative logs.
+- A roadmap toward measurable accuracy using a labeled dataset.
 
-## Limitations:
+## Processing flow
 
-There are only 3 sample logs, results come from single runs, and the substring check is strict: evidence must match text in the log after whitespace and case normalization. The uninformative-log rule is intentionally simple and may need adjustment for other log formats.
+```text
+Failure log
+    |
+    v
+OpenAI model
+    |
+    v
+Structured triage result
+    |
+    +--> validate fields/category/confidence
+    |
+    +--> verify evidence exists in source log
+    |
+    +--> apply deterministic log-quality rules
+    |
+    v
+Accept result or flag for human review
+```
 
-## Next:
+## Why the guardrails matter
 
-Build a labeled set of 40 logs, measure classification accuracy against those labels, and add the deterministic checks and review flag to CI.
+LLM output is treated as a **proposal**, not ground truth. The POC checks:
+
+- malformed categories or fields
+- invalid confidence values
+- missing evidence
+- evidence not present in the original log
+- `unknown` classifications
+- generic logs containing little diagnostic information
+
+Any of these conditions can trigger human review.
+
+## Current findings
+
+- The model can turn synthetic failure logs into structured triage output.
+- Deterministic validation can reject malformed responses.
+- Evidence checking catches unsupported quotations.
+- Human review can be triggered instead of accepting uncertain output.
+- Simple code rules are useful for cases where the input log itself is not informative enough.
+
+## Limitations
+
+The current dataset contains only three sample logs, and results are based on single runs. Evidence matching is intentionally strict: after whitespace/case normalization, supporting evidence must exist in the source log. The uninformative-log rule is also deliberately simple and will need adaptation for other log formats.
 
 ## Run
 
-Set `OPENAI_API_KEY`, then run:
+Set your API key in the environment:
 
-```sh
+```bash
+export OPENAI_API_KEY="your-key"
 python triage.py sample_logs/hil_flash_timeout.log
 ```
 
-Optionally set `OPENAI_MODEL` to choose a model. Dependencies are listed in `requirements.txt`.
+Optionally set `OPENAI_MODEL` to select a model. Dependencies are listed in `requirements.txt`.
+
+## Next milestone
+
+Build a labeled set of approximately 40 failure logs and measure:
+
+- classification accuracy
+- unsupported-evidence rate
+- human-review rate
+- deterministic validation failures
+- repeatability across runs
+
+The next engineering step is to integrate those checks into CI so AI-assisted triage has a measurable quality gate.
+
+---
+
+**Primary technologies:** Python · OpenAI API · LLM evaluation · Test Automation · Log Analysis · AI-assisted QA
