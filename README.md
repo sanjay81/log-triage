@@ -1,5 +1,8 @@
 # AI-Assisted Log Triage
 
+[![Log Triage CI](https://github.com/sanjay81/log-triage/actions/workflows/ci.yml/badge.svg)](https://github.com/sanjay81/log-triage/actions/workflows/ci.yml)
+
+
 A small **AI-for-QA proof of concept** that combines an OpenAI model with deterministic validation rules to triage automated-test failure logs.
 
 The goal is not to let an LLM become the authority. Instead, the model proposes a structured classification and supporting evidence, while ordinary code verifies the response and routes uncertain results to human review.
